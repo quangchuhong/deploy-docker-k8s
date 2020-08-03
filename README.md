@@ -1,18 +1,16 @@
-# Ansible-grafana-telegraf-influxdb
-Triển khai hệ thống monitor tool grafana
+# Ansible-docker-k8s-iptalbes
+Triển khai hệ thống docker-k8s
 
-# Cấu Trúc triển khai cài đặt hệ thống Monitor Grafana-Influxdb-Telegraf
-- Roles: Grafana - Telegraf - Influxdb - iptables
+# Cấu Trúc triển khai 
+- Roles: docker-k8s-iptables
 
 - OS: Triển khai trên hai hệ điều hành Ubuntu16.04 vs CentOS 7.
 
 - Site.yml: File run install Roles.
 
-- Copy-telegraf.yml: Copy bộ config template đến all agent.
-
 - File hosts: List ip server
 
-- Template: telegraf.conf.j2, firewall.bash.j2, iptables.sh, telegraf_ping.conf, telegraf_snmp.conf, telegraf_window.conf.
+- Template: firewall.bash.j2, iptables.sh
 
 # Run Ansibles:
 
@@ -22,11 +20,11 @@ Triển khai hệ thống monitor tool grafana
 
 - ansible -i hosts -m ping all
 
-- ansible-playbook -i hosts site.yml --tags install-telegraf
+- ansible-playbook -i hosts site.yml --tags install-docker
   
-- ansible-playbook -i hosts site.yml --tags install-grafana
+- ansible-playbook -i hosts site.yml --tags install-kubelet
   
-- ansible-playbook -i hosts site.yml --tags install-influxdb
+- ansible-playbook -i hosts site.yml --tags install-iptables
 
 # Config Firewall on server 
 
