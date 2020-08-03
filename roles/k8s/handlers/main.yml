@@ -1,0 +1,8 @@
+---
+# handlers file restart services
+#
+- name: restart kubelet
+  service: name=kubelet state=restarted
+
+
+

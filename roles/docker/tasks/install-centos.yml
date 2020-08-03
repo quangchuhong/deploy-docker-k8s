@@ -1,0 +1,69 @@
+---
+
+- name: purge old docker packages
+  yum:
+    name:
+      - docker
+      - docker-common
+      - container-selinux
+      - docker-selinux
+      - docker-engine
+    state: absent
+
+- name: install requirements
+  yum:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    update_cache: yes
+
+- name: Add Docker repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+  become: yes
+
+- name: Install docker CE
+  become: yes
+  yum:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - "docker-ce"
+    - "docker-ce-cli"
+    - "containerd.io"
+  notify: restart docker
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+
+- name: Add user to docker group
+  become: true
+  user:
+    name: "{{ item }}"
+    groups: "docker"
+  with_items: "{{ docker_users }}"
+
+
+- name: Install latest version of docker-compose
+  become: true
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+    dest: "/usr/local/bin/docker-compose"
+    owner: "root"
+    mode: "+x"
+
+
+
+
+
+
+
+
+
