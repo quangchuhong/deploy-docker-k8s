@@ -22,26 +22,27 @@ Triển khai hệ thống docker-k8s
 
 - ansible-playbook -i hosts site.yml --tags install-docker -------------------run all hosts              
 
-- ansible-playbook -i hosts site.yml --tags install-iptables ------------------run all hosts, install vs open port trước khi install kubeneste.            
+- ansible-playbook -i hosts site.yml --tags install-iptables ------------------run all hosts, trước khi install k8s           
   
 - ansible-playbook -i hosts site.yml --tags install-kubelet -------------------run all kmaster vs knode host.
 
 - ansible-playbook -i hosts site.yml --tags init-config-kmaster ---------------run kmaster, config kube on master host.
 
-- ansible-playbook -i hosts site.yml --tags init-config-knode -----------------run knode, config kube on knode host vs join knode to kmaster in cluser.File admin.conf.j2, copy từ kmaster /etc/kube/admin.conf.  
-- ansible-playbook -i hosts copy-file-conf.yml --tags copy-dockerfile ---------copy dockerfile đến cá Docker host để build docker images.
+- ansible-playbook -i hosts site.yml --tags init-config-knode -----------------run knode, config kube on knode host.
+
+- ansible-playbook -i hosts copy-file-conf.yml --tags copy-dockerfile ---------copy dockerfile đến cá Docker host-build docker images.
 
 - ansible-playbook -i hosts copy-file-conf.yml --tags copy-passdocker ---------shell register docker login to docker hub.
 
-- ansible-playbook -i hosts copy-file-conf.yml --tags restart-docker ----------restart docker service, install iptables cần restart docker service.
+- ansible-playbook -i hosts copy-file-conf.yml --tags restart-docker ----------restart docker service, install iptables-restart docker
 
-- ansible-playbook -i hosts copy-file-conf.yml --tags copy-firewall.bash ------copy file bash firewall, add port vs rule cần chạy
+- ansible-playbook -i hosts copy-file-conf.yml --tags copy-firewall.bash ------copy file bash firewall, add port vs rule.
 
 # Run Ansibles shell check remote host via ssh:
 
 - ansible -i hosts all -m shell -a 'docker run hello-world'
 
-- ansible -i hosts all -m shell -a "sudo docker build -t apache:0.1 /opt/dockers/apache/." --------------build docker images from dockerfile tren ansible.
+- ansible -i hosts all -m shell -a "sudo docker build -t apache:0.1 /opt/dockers/apache/." --------------build docker images.
 
 - ansible -i hosts all -m shell -a "sudo docker images"
 
@@ -49,7 +50,7 @@ Triển khai hệ thống docker-k8s
 
 - ansible -i hosts all -m shell -a "sudo docker run -d -it -p 443:443 --name nginx-server nginx:1.0" ------run docker images from ansible.
 
-- ansible -i hosts all -m shell -a "cat /opt/dockers/passdocker.txt | docker login --username=quanghong10 --password-stdin" ----ansible command docker login auto
+- ansible -i hosts all -m shell -a "cat /opt/dockers/passdocker.txt | docker login --username=quanghong10 --password-stdin" ----docker login auto
 
 
 # Config Firewall on server 
