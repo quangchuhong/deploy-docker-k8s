@@ -20,9 +20,9 @@ Triển khai hệ thống docker-k8s
 
 - ansible -i hosts -m ping all
 
-- ansible-playbook -i hosts site.yml --tags install-docker              # run all hosts
+- ansible-playbook -i hosts site.yml --tags install-docker              ** run all hosts
 
-- ansible-playbook -i hosts site.yml --tags install-iptables            # run all hosts, install vs open port trước khi install kubeneste.
+- ansible-playbook -i hosts site.yml --tags install-iptables            ** run all hosts, install vs open port trước khi install kubeneste.
   
 - ansible-playbook -i hosts site.yml --tags install-kubelet             # run all kmaster vs knode host.
 
