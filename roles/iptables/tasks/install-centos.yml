@@ -84,7 +84,11 @@
   tags:
     - iptables-Cen7
 
-
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  tags: restart-docker
 
 
 

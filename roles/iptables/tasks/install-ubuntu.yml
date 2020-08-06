@@ -83,3 +83,8 @@
   tags:
     - iptables-u1604
 
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  tags: restart-docker
