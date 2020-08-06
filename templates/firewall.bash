@@ -47,6 +47,13 @@ iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 3000 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 8086 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 6443 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 10250 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 10251 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 10252 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 10255 -j ACCEPT
+
+
 
 # Accept icmp ping requests.
 iptables -A INPUT -p icmp -j ACCEPT
