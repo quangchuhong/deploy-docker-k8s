@@ -75,6 +75,9 @@
     owner: "root"
     mode: "+x"
 
+- name: shell command docker run hello-world
+  shell: docker run hello-world
+  tags: run-docker-hello
 
 
 
