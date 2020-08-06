@@ -40,17 +40,17 @@ Triển khai hệ thống docker-k8s
 
 # Run Ansibles shell check remote host via ssh:
 
-$ ansible -i hosts all -m shell -a 'docker run hello-world'
+- ansible -i hosts all -m shell -a 'docker run hello-world'
 
-$ ansible -i hosts all -m shell -a "sudo docker build -t apache:0.1 /opt/dockers/apache/."						## build docker images from dockerfile tren ansible.
+- ansible -i hosts all -m shell -a "sudo docker build -t apache:0.1 /opt/dockers/apache/."						## build docker images from dockerfile tren ansible.
 
-$ ansible -i hosts all -m shell -a "sudo docker images"
+- ansible -i hosts all -m shell -a "sudo docker images"
 
-$ ansible -i hosts all -m shell -a "sudo docker ps"
+- ansible -i hosts all -m shell -a "sudo docker ps"
 
-$ ansible -i hosts all -m shell -a "sudo docker run -d -it -p 443:443 --name nginx-server nginx:1.0"			## run docker images from ansible.
+- ansible -i hosts all -m shell -a "sudo docker run -d -it -p 443:443 --name nginx-server nginx:1.0"			## run docker images from ansible.
 
-$ ansible -i hosts all -m shell -a "cat /opt/dockers/passdocker.txt | docker login --username=quanghong10 --password-stdin"		## ansible command docker login auto
+- ansible -i hosts all -m shell -a "cat /opt/dockers/passdocker.txt | docker login --username=quanghong10 --password-stdin"		## ansible command docker login auto
 
 
 # Config Firewall on server 
