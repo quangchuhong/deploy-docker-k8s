@@ -1,0 +1,14 @@
+
+---
+# edit dns /etc/hosts kube-cluster
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: copy file hosts 
+    template:
+      src: "{{ item }}"
+      dest: /etc/hosts
+    with_items:
+      - hosts
+    tags: copy-dns
