@@ -1,41 +1,67 @@
 ---
-# copy telegraf.conf to all hosts
-- hosts: u16-server
+# copy docker file to all hosts
+- hosts: all
   become: yes
   tasks:
-  - name: copy telegraf conf all host
-    template:
-      src: telegraf.conf.j2
-      dest: /etc/telegraf/telegraf.conf
-      force: yes
-      backup: yes
-      owner: telegraf
-      group: telegraf
-      mode: 0744
-    tags: telegraf-copy
 
-  - name: copy config to folder telegraf.d
+  - name: Creates directory dockers
+    file:
+      path: /opt/dockers/nginx
+      state: directory
+      #owner: root
+      #group: root
+      mode: 0775
+    tags: copy-dockerfile
+
+  - name: copy docker file all host c7 vs u1604.
+    copy:
+      src: /home/quangch/Desktop/SystemAll/TAI LIEU DEPLOYED HE THONG/K8S/DockerFolder/nginx/
+      dest: /opt/dockers/nginx
+      mode: 0774
+    tags: copy-dockerfile
+
+
+  - name: copy file passdocker.txt
     template:
       src: "{{ item }}"
-      dest: /etc/telegraf/telegraf.d
-      force: yes
-      backup: yes
-      owner: telegraf
-      group: telegraf
-      mode: 0744
+      dest: /opt/dockers
+      mode: 0775
     with_items:
-#      - telegraf_ping.conf
-#      - telegraf_snmp_bw.conf
-#      - telegraf_snmp_sw_3750_2960.conf
-#      - telegraf_window_server.conf
-    tags: telegraf-copy
+      - passdocker.txt
+    tags: copy-passdocker
 
+  - name: shell command docker login
+    shell: cat /opt/dockers/passdocker.txt | docker login --username=quanghong10 --password-stdin
+    args:
+      chdir: /opt/dockers
+    tags: copy-passdocker
 
-
-  - name: Restarted telegraf service
+  - name: restart docker
+    become: true
     service:
-       name: telegraf
-       state: restarted
-    tags: telegraf-copy
+      name: docker
+      state: restarted
+    tags: restart-docker
+
+
+  - name: Copy firewall script into place.
+    template:
+      src: firewall.bash
+      dest: /etc/firewall.bash
+      owner: root
+      group: root
+      mode: 0744
+    tags: copy-firewall.bash
+
+  - name: restart firewall
+    service: name=firewall state=restarted
+    tags: copy-firewall.bash
+  
+
+
+
+
+
+
 
 
