@@ -1,1 +1,219 @@
 ---
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+  tags: install-kubelet
+
+- name: Turn swap off
+  shell: swapoff -a
+  tags: install-kubelet
+
+- name: copy file hosts 
+  template:
+    src: "{{ item }}"
+    dest: /etc/hosts
+  with_items:
+    - hosts
+  tags: install-kubelet
+    
+- name: "Disable SELinux :("
+  selinux:
+    state: disabled
+
+- name: Set Enforce
+  command: setenforce 0
+  ignore_errors: True
+  tags: install-kubelet
+
+- name: Install epel
+  yum:
+    name: epel-release
+    state: latest
+
+
+- name: Add Kubernetes yum repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    gpgcheck: yes
+  tags: install-kubelet  
+
+- name: upgrade all packages, excluding kernel
+  yum:
+    name: '*'
+    state: latest
+    exclude: kernel*
+  tags: install-kubelet
+
+- name: Install kubelet,kubeadm,kubectl package
+  yum:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: latest
+  tags: install-kubelet
+
+- name: Add vm swappiness
+  lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    line: 'vm.swappiness = 0'
+    state: present
+    create: yes
+  tags: install-kubelet
+
+
+- name: Add vm overcommit_memory
+  lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    line: 'vm.overcommit_memory = 1'
+    state: present
+    create: yes
+  tags: install-kubelet
+
+- name: Add netbridge config ip4
+  lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    line: 'net.bridge.bridge-nf-call-iptables = 1'
+    state: present
+    create: yes
+  tags: install-kubelet
+
+- name: Increase net ipv4 tcp_max_syn_backlog
+  lineinfile:
+    path: /etc/sysctl.d/k8s.conf
+    line: 'net.ipv4.tcp_max_syn_backlog=2621440'
+    state: present
+    create: yes
+  tags: install-kubelet
+
+- name: update sysctl
+  command: sysctl --system
+  tags: install-kubelet
+  
+- name: Start kubelet
+  systemd:
+    state: started
+    daemon_reload: yes
+    name: kubelet
+    enabled: yes
+  tags: install-kubelet
+
+
+       # Initialize Cluster. The log is also used to prevent an second initialization
+- name: Initialize Cluster
+  shell: kubeadm init --apiserver-advertise-address=192.168.17.38 --pod-network-cidr=10.244.0.0/16 >> cluster_init.log
+  args:
+    chdir: $HOME
+    creates: cluster_init.log
+  tags: init-config-kmaster
+    
+       # Create the configuration / configuration directory
+- name: Create .kube directory
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+  tags: init-config-kmaster
+    
+- name: Copy admin.conf to the user's kube directory
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: $HOME/.kube/config
+    remote_src: yes
+  tags: init-config-kmaster
+    
+- name: Setup Calico network
+  shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml >> calico_setup.log
+  args:
+    chdir: $HOME
+    creates: calico_setup.log
+  tags: init-config-kmaster
+
+- name: Create token to join cluster
+  shell: kubeadm token create --print-join-command
+  register: join_command_raw
+  tags: init-config-kmaster
+
+- name: Set join command as fact
+  set_fact:
+    join_command: "{{ join_command_raw.stdout_lines[0] }}"
+  tags: init-config-kmaster
+
+## create config kube node
+
+- name: Create .kube directory on Knode
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+  tags: init-config-knode
+
+- name: Copy admin.conf to the user's kube Knode
+  template:
+    src: admin.conf.j2
+    dest: $HOME/.kube/config
+    mode: 755
+  tags: init-config-knode
+
+
+- name: kubenode join token on master
+  shell: kubeadm join 192.168.17.38:6443 --token oz462a.ddncu8au0gt85hic --discovery-token-ca-cert-hash sha256:1ad056a1c9c5f6aa060e1074d04e1fafd638fb6d6ead9754f50e8663abb47119 >> kube_join.log
+  args:
+    chdir: $HOME
+    creates: kube_join.log
+  tags: init-config-knode
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
