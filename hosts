@@ -1,8 +1,7 @@
-[cen7-server]
-192.168.17.106	ansible_user=root
+[kmaster]
+192.168.17.38	ansible_user=quangch
 
-[u16-server]
-192.168.17.92	ansible_user=quangch
-
-
+[knode]
+192.168.17.106  ansible_user=root
+192.168.17.92   ansible_user=quangch
 
